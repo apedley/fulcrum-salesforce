@@ -1,0 +1,27 @@
+{
+  "name": "fulcrum-objects",
+  "version": "0.0.1",
+  "description": "Objects for fulcrum",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/apedley/fulcrum-objects.git"
+  },
+  "author": "Andrew Pedley",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/apedley/fulcrum-objects/issues"
+  },
+  "homepage": "https://github.com/apedley/fulcrum-objects#readme",
+  "dependencies": {
+    "bluebird": "^3.3.3",
+    "salesforce-rest": "^0.0.2"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5"
+  }
+}
