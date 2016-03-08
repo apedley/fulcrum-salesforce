@@ -5,8 +5,18 @@ var testConfig = require('./config');
 
 describe('Student', function() {
   var student;
-
+  // Login before anything else
+  before(function(done){
+    Login.login(testConfig)
+    .then(function() {
+      done();
+    });
+  });
   describe('constructor', function() {
+    
+
+
+    // Test Properties
     var accountProperties = {
       FirstName: 'Cowboy',
       LastName: 'Texas',
@@ -22,6 +32,7 @@ describe('Student', function() {
       Fulcrum_Status__c: 'Active',
       Sponsorship__c: 'Not Sponsored'
     }
+    var CONTACT_ID = '003P000000hOGtQIAW';
 
     it('is a function', function() {
       expect(Student).to.be.a('function');
@@ -50,12 +61,16 @@ describe('Student', function() {
 
   });
 
-  // describe('update', function() {
-  //   it('should not update with invalid properties', function(done) {
-  //     var updateFunction = function() {
-  //       student.update({Module_X__c: 'Nothing'});
-  //     };
-  //     expect(updateFunction).to.throw(Error);
-  //   });
-  // });
+  describe('find', function() {
+    it('should not find a student when ')
+  });
+
+  xdescribe('update', function() {
+    it('should not update with invalid properties', function(done) {
+      var updateFunction = function() {
+        student.update({Module_X__c: 'Nothing'});
+      };
+      expect(updateFunction).to.throw(Error);
+    });
+  });
 });

@@ -17,14 +17,16 @@ Creates a student. Required fields for properties are:
 */
 
 var Student = function student(properties, callback) {
+
+  // Create new record
   this.properties = properties;
   if (!properties) {
-    return;
+    throw new Error('Properties need to be defined when creating a new record');
   }
   var complete = _.every(requiredKeys, function(key) {
     return !!properties[key];
   });
-
+  
   if (!complete) {
     throw new Error('missing required fields');
   }
