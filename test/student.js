@@ -47,5 +47,15 @@ describe('Student', function() {
         });
       });
     });
+
   });
+
+  // describe('update', function() {
+  //   it('should not update with invalid properties', function(done) {
+  //     var updateFunction = function() {
+  //       student.update({Module_X__c: 'Nothing'});
+  //     };
+  //     expect(updateFunction).to.throw(Error);
+  //   });
+  // });
 });

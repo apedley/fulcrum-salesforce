@@ -2,10 +2,22 @@ var salesforceRest = require('salesforce-rest');
 var _ = require('underscore');
 
 /*
-Creates a student. Required fields are:
+Creates a student. Required fields for properties are:
+'FirstName',
+'LastName',
+'Partnership_Status__c',
+'Remote__c',
+'Phone',
+'Github__c',
+'Email',
+'Pace__c',
+'Overall_Substatus__c',
+'Fulcrum_Status__c',
+'Sponsorship__c'
 */
 
 var Student = function student(properties, callback) {
+  this.properties = properties;
   if (!properties) {
     return;
   }
@@ -34,8 +46,15 @@ var Student = function student(properties, callback) {
   .catch(function(e) {
     console.error(e);
   });
-
 };
+
+Student.prototype.update = function(properties) {
+  // console.log(this.properties);
+  // console.log(this.AccountId);
+  // console.log(this.ContactId);
+  
+};
+
 
 var requiredKeys = [
   'FirstName',
@@ -51,17 +70,12 @@ var requiredKeys = [
   // fulcrum discount amount
   'Fulcrum_Status__c',
   'Sponsorship__c'
-]
+];
+
+// Creates an Account object in SF
 var createAccount = function(properties) {
   var accountProperties = _.pick(properties, 'Partnership_Status__c', 'Remote__c', 'Phone');
   accountProperties.Name = properties.FirstName + ' ' + properties.LastName;
-
-  // var accountProperties = {
-  //   Name: properties.firstName + ' ' + properties.lastName,
-  //   Partnership_Status__c: properties.partnershipStatus,
-  //   Remote__c: properties.remote.toString(),
-  //   Phone: properties.phone.toString()
-  // }
 
   var path = '/services/data/v20.0/sobjects/Account/';
   return new Promise(function(resolve, reject) {
@@ -75,37 +89,19 @@ var createAccount = function(properties) {
   })
 }
 
+// Creates a Contact object in SF
 var createContact = function(accountId, properties, callback) {
   var contactProperties = _.pick(properties, 'FirstName', 'LastName', 'Email', 'Pace__c', 'GitHub__c',
                                  'Fulcrum_Status__c', 'Overall_Substatus__c', 'Sponsorship__c');
   contactProperties.AccountId = accountId;
-  // var contactProperties = {
-  //   FirstName: properties.firstName,
-  //   LastName: properties.lastName,
-  //   Email: properties.email,
-  //   Pace__c: properties.pace,
-  //   GitHub__c: properties.github,
-  //   Fulcrum_Status__c: properties.fulcrumStatus,
-  //   Overall_Substatus__c: properties.fulcrumSubstatus,
-  //   Sponsorship__c: properties.sponsorship,
-  //   AccountId: accountId
-  // }
+
   var path = '/services/data/v20.0/sobjects/Contact/';
 
   salesforceRest.post(path, contactProperties, function(error, data) {
     callback(error, data.data);
   });
-
-  // return new Promise(function(resolve, reject) {
-  //   salesforceRest.post(path, contactProperties, function(error, data) {
-  //     debugger;
-  //     if (error) {
-  //       reject(error);
-  //     } else {
-  //       resolve(data);
-  //     }
-  //   });
-  // });
 }
+
+
 
 module.exports = Student;
