@@ -16,21 +16,47 @@ Creates a student. Required fields for properties are:
 'Sponsorship__c'
 */
 
-var Student = function student(properties, callback) {
+var Student = function student(contactId, properties, callback) {
+  if (contactId) {
+    this.find(contactId, callback);
+  } else {
+    this.create(properties, callback);
+  }
+};
 
-  // Create new record
-  this.properties = properties;
+Student.prototype.find = function(contactId, callback) {
+  var student = this;
+  student.contactId = contactId;
+
+  var query = "Select FirstName, LastName, Account.Partnership_Status__c, Account.Remote__c, Account.Phone, Github__c, Email, Pace__c, Overall_Substatus__c, Fulcrum_Status__c, Sponsorship__c FROM Contact WHERE Id = '" + contactId + "'";
+  salesforceRest.get(query, function(error, data) {
+    if (error || !data.done || data.totalSize < 1) {
+      throw new Error('Error finding Student');
+    }
+    var record = data.records[0];
+    record = _.extend(record, record.Account);
+    record = _.omit(record, 'attributes', 'Account');
+    _.extend(student, record);
+    callback(null, student);
+  });
+};
+
+Student.prototype.create = function(properties, callback) {
+  var student = this;
+  _.extend(student, properties);
+
+  // Make sure all required properties are there
   if (!properties) {
     throw new Error('Properties need to be defined when creating a new record');
   }
   var complete = _.every(requiredKeys, function(key) {
     return !!properties[key];
   });
-  
+
   if (!complete) {
     throw new Error('missing required fields');
   }
-  _.extend(this, properties);
+
   var thisStudent = this;
 
   // Create account
@@ -48,7 +74,7 @@ var Student = function student(properties, callback) {
   .catch(function(e) {
     console.error(e);
   });
-};
+}
 
 Student.prototype.update = function(properties) {
   // console.log(this.properties);

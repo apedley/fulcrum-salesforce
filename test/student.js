@@ -2,6 +2,7 @@ var expect = require('chai').expect;
 var Student = require('../objects/student');
 var Login = require('../objects/login');
 var testConfig = require('./config');
+var studentProperties = require('./fixtures').studentProperties;
 
 describe('Student', function() {
   var student;
@@ -12,58 +13,52 @@ describe('Student', function() {
       done();
     });
   });
+
   describe('constructor', function() {
-    
 
-
-    // Test Properties
-    var accountProperties = {
-      FirstName: 'Cowboy',
-      LastName: 'Texas',
-      Partnership_Status__c: 'None',
-      Remote__c: true,
-      Phone: 8008675309,
-      Github__c: 'cowboy123',
-      Email: 'cowboy@gmail.com',
-      Pace__c: 'Relaxed',
-      Overall_Substatus__c: 'Started',
-      // fulcrumTuition
-      // fulcrum discount amount
-      Fulcrum_Status__c: 'Active',
-      Sponsorship__c: 'Not Sponsored'
-    }
     var CONTACT_ID = '003P000000hOGtQIAW';
+    var contactId;
 
     it('is a function', function() {
       expect(Student).to.be.a('function');
     });
-    
+
     it('does not create a new account and contact if properties are missing', function() {
-      accountProperties.Remote__c = null;
+      studentProperties.Remote__c = null;
       var createFunction = function() {
-        var student = new Student(accountProperties);
+        var student = new Student(null, studentProperties, function(){});
       }
       expect(createFunction).to.throw(Error);
-      accountProperties.Remote__c = true;
+      studentProperties.Remote__c = true;
     });
 
     it('creates a new account and contact on creation', function(done) {
       this.timeout(5000);
       Login.login(testConfig)
       .then(function() {
-        student = new Student(accountProperties, function(accountId, contactId) {
-          expect(accountId.length).to.be.gt(0);
-          expect(contactId.length).to.be.gt(0);
+        student = new Student(null, studentProperties, function(account, contact) {
+          expect(account.length).to.be.gt(0);
+          expect(contact.length).to.be.gt(0);
+          contactId = contact;
           done();
         });
       });
     });
-
+    it('looks up a student if an ID is given', function(done) {
+      student = new Student(contactId, {}, function(error, student) {
+        expect(error).to.be.null;
+        expect(student.Email.length).to.be.gt(0);
+        expect(student.Remote__c).to.not.be.null;
+        done();
+      });
+    });
   });
 
-  describe('find', function() {
-    it('should not find a student when ')
-  });
+  describe('delete', function() {
+    it('should delete the account and record of a student', function(done) {
+      
+    });
+  })
 
   xdescribe('update', function() {
     it('should not update with invalid properties', function(done) {

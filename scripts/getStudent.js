@@ -13,7 +13,6 @@ var student;
 Login.login(testConfig)
 .then(function() {
   student = new Student(CONTACT_ID, {}, function(error, data) {
-    console.log(error, data);
-    debugger;
+
   });
 });
