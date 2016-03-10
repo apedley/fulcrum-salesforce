@@ -1,6 +1,6 @@
 var Student = require('./objects/student');
-var Login = require('./objects/login');
+var Connection = require('./objects/connection');
 module.exports = [
   Student,
-  Login
+  Connection
 ]
