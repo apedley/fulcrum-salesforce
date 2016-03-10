@@ -24,7 +24,6 @@ describe('Student', function() {
       expect(Student).to.be.a('function');
     });
 
-
     it('creates a new student when not given a ContactID', function(done) {
       this.timeout(5000);
       new Student(conn, null, studentProperties)
@@ -75,5 +74,11 @@ describe('Student', function() {
     });
   });
 
-  
+  it('should give a list of all ids', function(done) {
+    Student.all(conn)
+    .then(function(records) {
+      expect(records).to.be.instanceof(Array);
+      done();
+    });
+  });
 });

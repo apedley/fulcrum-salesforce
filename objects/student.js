@@ -40,27 +40,33 @@ var Student = function student(connection, contactId, properties) {
 Student.prototype.create = function(properties) {
   var student = this;
   return new Promise(function(resolve, reject) {
-    var accountProperties = _.pick(properties, 'Partnership_Status__c', 'Remote__c', 'Phone');
+    var recordTypeId;
 
-    accountProperties.Name = properties.FirstName + ' ' + properties.LastName;
-    student.conn.sobject("Account").create(accountProperties, function(err, ret) {
-      if (err || !ret.success) {
-        reject(err, ret);
-      }
-      student.accountId = ret.id;
-      var contactProperties = _.pick(properties, 'FirstName', 'LastName', 'Email', 'Pace__c', 
-        'GitHub__c', 'Fulcrum_Status__c', 'Overall_Substatus__c', 'Sponsorship__c');
-      contactProperties.AccountId = student.accountId;
+    Student.getRecordTypeId(student.conn)
+    .then(function(data) {
+      recordTypeId = data;
+      var accountProperties = _.pick(properties, 'Partnership_Status__c', 'Remote__c', 'Phone');
 
-      student.conn.sobject("Contact").create(contactProperties, function(err, ret) {
+      accountProperties.Name = properties.FirstName + ' ' + properties.LastName;
+      student.conn.sobject("Account").create(accountProperties, function(err, ret) {
         if (err || !ret.success) {
           reject(err, ret);
         }
-        student.contactId = ret.id;
-        student.find(student.contactId)
-        .then(function(info) {
-          _.extend(student, info);
-          resolve(student);
+        student.accountId = ret.id;
+        var contactProperties = _.pick(properties, 'FirstName', 'LastName', 'Email', 'Pace__c', 
+          'GitHub__c', 'Fulcrum_Status__c', 'Overall_Substatus__c', 'Sponsorship__c');
+        contactProperties.AccountId = student.accountId;
+        contactProperties.RecordTypeId = recordTypeId;
+        student.conn.sobject("Contact").create(contactProperties, function(err, ret) {
+          if (err || !ret.success) {
+            reject(err, ret);
+          }
+          student.contactId = ret.id;
+          student.find(student.contactId)
+          .then(function(info) {
+            _.extend(student, info);
+            resolve(student);
+          });
         });
       });
     });
@@ -105,5 +111,29 @@ Student.prototype.delete = function() {
   });
 };
 
+Student.all = function(connection) {
+  return new Promise(function(resolve, reject) {
+    Student.getRecordTypeId(connection)
+    .then(function(recordTypeId) {
+      connection.query("Select Id FROM Contact WHERE RecordTypeId = '" + recordTypeId + "'", function(err, result) {
+        if (err) {
+          return reject(err);
+        }
+        resolve(result.records);
+      });
+    });
+  });
+}
+
+Student.getRecordTypeId = function(connection) {
+  return new Promise(function(resolve, reject) {
+    connection.query("Select Id FROM RecordType WHERE Name = 'Fulcrum Student'", function(err, result) {
+      if (err) {
+        return reject(err);
+      }
+      resolve(result.records[0].Id);
+    })
+  })
+}
 
 module.exports = Student;
