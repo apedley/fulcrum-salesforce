@@ -63,7 +63,7 @@ describe('Student', function() {
     });
   });
 
-  describe('delete', function() {
+  xdescribe('delete', function() {
     this.timeout(5000);
     it('should delete the account and record of a student', function(done) {
       _student.delete()

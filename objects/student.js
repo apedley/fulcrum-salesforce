@@ -8,7 +8,7 @@ var requiredKeys = [
   'Partnership_Status__c',
   'Remote__c',
   'Phone',
-  'Github__c',
+  'GitHub__c',
   'Email',
   'Pace__c',
   'Overall_Substatus__c',
