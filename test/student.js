@@ -36,6 +36,20 @@ describe('Student', function() {
       });
     });
 
+    it('creates a student with defaults for properties that are not set', function(done) {
+      this.timeout(5000);
+      var phone = studentProperties.Phone;
+      delete studentProperties.Phone;
+
+      new Student(conn, null, studentProperties)
+      .then(function(student) {
+        expect(student.account.Phone).to.be.eq(0);
+
+        studentProperties.Phone = phone;
+        done();
+      });
+    });
+
     it('does not create a student when properties are not set', function() {
       var createFunction = function() {
         student = new Student(conn, null, {});
@@ -63,7 +77,7 @@ describe('Student', function() {
     });
   });
 
-  xdescribe('delete', function() {
+  describe('delete', function() {
     this.timeout(5000);
     it('should delete the account and record of a student', function(done) {
       _student.delete()

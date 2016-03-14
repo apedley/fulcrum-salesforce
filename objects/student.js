@@ -5,18 +5,20 @@ var Promise = require('bluebird');
 var requiredKeys = [
   'FirstName',
   'LastName',
-  'Partnership_Status__c',
-  'Remote__c',
-  'Phone',
   'GitHub__c',
-  'Email',
-  'Pace__c',
-  'Overall_Substatus__c',
-  // fulcrumTuition
-  // fulcrum discount amount
-  'Fulcrum_Status__c',
-  'Sponsorship__c'
+  'Email'
 ];
+
+var defaults = {
+  Partnership_Status__c: 'None',
+  Remote__c: true,
+  Phone: 0000000000,
+  Pace__c: 'Relaxed',
+  Overall_Substatus__c: 'Started',
+  Fulcrum_Status__c: 'Active',
+  Sponsorship__c: 'Not Sponsored'
+};
+
 
 var Student = function student(connection, contactId, properties) {
   this.conn = connection;
@@ -32,6 +34,8 @@ var Student = function student(connection, contactId, properties) {
       throw new Error('Required keys are not met');
     }
 
+    properties = _.defaults(properties, defaults);
+
     return this.create(properties);
   }
 };
@@ -46,6 +50,11 @@ Student.prototype.create = function(properties) {
     .then(function(data) {
       recordTypeId = data;
       var accountProperties = _.pick(properties, 'Partnership_Status__c', 'Remote__c', 'Phone');
+      student.account = {
+        Partnership_Status__c: properties.Partnership_Status__c,
+        Remote__c: properties.Remote__c,
+        Phone: properties.Phone
+      };
 
       accountProperties.Name = properties.FirstName + ' ' + properties.LastName;
       student.conn.sobject("Account").create(accountProperties, function(err, ret) {
@@ -53,6 +62,7 @@ Student.prototype.create = function(properties) {
           reject(err, ret);
         }
         student.accountId = ret.id;
+        student.account.Id = ret.id;
         var contactProperties = _.pick(properties, 'FirstName', 'LastName', 'Email', 'Pace__c', 
           'GitHub__c', 'Fulcrum_Status__c', 'Overall_Substatus__c', 'Sponsorship__c');
         contactProperties.AccountId = student.accountId;
