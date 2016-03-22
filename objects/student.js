@@ -49,37 +49,60 @@ Student.prototype.create = function(properties) {
     Student.getRecordTypeId(student.conn)
     .then(function(data) {
       recordTypeId = data;
-      var accountProperties = _.pick(properties, 'Partnership_Status__c', 'Remote__c', 'Phone');
+
       student.account = {
         Partnership_Status__c: properties.Partnership_Status__c,
         Remote__c: properties.Remote__c,
         Phone: properties.Phone
       };
 
-      accountProperties.Name = properties.FirstName + ' ' + properties.LastName;
-      student.conn.sobject("Account").create(accountProperties, function(err, ret) {
-        if (err || !ret.success) {
-          reject(err, ret);
-        }
-        student.accountId = ret.id;
-        student.account.Id = ret.id;
+      if (properties.accountId) {
+        student.accountId = properties.accountId;
+        student.account.Id = properties.accountId;
+        createContact().then(resolve).catch(reject);
+      }
+      else {
+        createAccount().then(createContact).then(resolve).catch(reject);
+      }
+
+      function createAccount() {
+        var accountProperties = _.pick(properties, 'Partnership_Status__c', 'Remote__c', 'Phone');
+        accountProperties.Name = properties.FirstName + ' ' + properties.LastName;
+        return new Promise(function(resolve, reject) {
+          student.conn.sobject("Account").create(accountProperties, function(err, ret) {
+            if (err || !ret.success) {
+              reject(err, ret);
+            }
+            student.accountId = ret.id;
+            student.account.Id = ret.id;
+            resolve();
+          });
+        });
+      }
+
+      function createContact() {
         var contactProperties = _.pick(properties, 'FirstName', 'LastName', 'Email', 'Pace__c', 
           'GitHub__c', 'Fulcrum_Status__c', 'Overall_Substatus__c', 'Sponsorship__c');
         contactProperties.AccountId = student.accountId;
         contactProperties.RecordTypeId = recordTypeId;
-        student.conn.sobject("Contact").create(contactProperties, function(err, ret) {
-          if (err || !ret.success) {
-            reject(err, ret);
-            return;
-          }
-          student.contactId = ret.id;
-          student.find(student.contactId)
-          .then(function(info) {
-            _.extend(student, info);
-            resolve(student);
+
+        return new Promise(function(resolve, reject) {
+          student.conn.sobject("Contact").create(contactProperties, function(err, ret) {
+            if (err || !ret.success) {
+              reject(err, ret);
+              return;
+            }
+            else {
+              student.contactId = ret.id;
+              student.find(student.contactId)
+              .then(function(info) {
+                _.extend(student, info);
+                resolve(student);
+              });              
+            }
           });
         });
-      });
+      }
     });
   });
 };
