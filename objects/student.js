@@ -70,6 +70,7 @@ Student.prototype.create = function(properties) {
         student.conn.sobject("Contact").create(contactProperties, function(err, ret) {
           if (err || !ret.success) {
             reject(err, ret);
+            return;
           }
           student.contactId = ret.id;
           student.find(student.contactId)
