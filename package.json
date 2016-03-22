@@ -18,7 +18,8 @@
   "homepage": "https://github.com/apedley/fulcrum-objects#readme",
   "dependencies": {
     "bluebird": "^3.3.3",
-    "jsforce": "^1.6.0"
+    "jsforce": "^1.6.0",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "chai": "^3.5.0",

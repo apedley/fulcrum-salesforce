@@ -4,6 +4,7 @@ var Student = require('../objects/student');
 var Connection = require('../objects/connection');
 var testConfig = require('./config');
 var studentProperties = require('./fixtures').studentProperties;
+var _ = require('underscore');
 
 describe('Student', function() {
   var _student;
@@ -29,6 +30,20 @@ describe('Student', function() {
       new Student(conn, null, studentProperties)
       .then(function(student) {
         expect(student.AccountId.length).to.be.gt(0);
+        expect(student.Id.length).to.be.gt(0);
+        contactId = student.Id;
+        _student = student;
+        done();
+      });
+    });
+
+    it('creates a new student with an existing accountId', function(done) {
+      this.timeout(5000);
+      var accountId = '001P000000eQ5i6IAC';
+      var newProperties = _.extend(studentProperties, { accountId: accountId});
+      new Student(conn, null, newProperties)
+      .then(function(student) {
+        expect(student.AccountId).to.be.equal(accountId);
         expect(student.Id.length).to.be.gt(0);
         contactId = student.Id;
         _student = student;
