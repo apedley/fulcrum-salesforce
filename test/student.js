@@ -28,6 +28,7 @@ describe('Student', function() {
       this.timeout(5000);
       new Student(conn, null, studentProperties)
       .then(function(student) {
+        // TODO: Set AccountID to constant if it is a generic account
         expect(student.AccountId.length).to.be.gt(0);
         expect(student.Id.length).to.be.gt(0);
         contactId = student.Id;
@@ -36,6 +37,7 @@ describe('Student', function() {
       });
     });
 
+    // TODO: Update with new default properties
     it('creates a student with defaults for properties that are not set', function(done) {
       this.timeout(5000);
       var phone = studentProperties.Phone;

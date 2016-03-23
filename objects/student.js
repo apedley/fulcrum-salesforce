@@ -2,6 +2,7 @@ var jsforce = require('jsforce');
 var _ = require('underscore');
 var Promise = require('bluebird');
 
+// Required keys for contact
 var requiredKeys = [
   'FirstName',
   'LastName',
@@ -9,14 +10,16 @@ var requiredKeys = [
   'Email'
 ];
 
+// Default values
 var defaults = {
   Partnership_Status__c: 'None',
   Remote__c: true,
   Phone: 0000000000,
+  Sponsorship__c: 'Not Sponsored',
+  // TODO: Last three values are fulcrum specific
   Pace__c: 'Relaxed',
   Overall_Substatus__c: 'Started',
-  Fulcrum_Status__c: 'Active',
-  Sponsorship__c: 'Not Sponsored'
+  Fulcrum_Status__c: 'Active'
 };
 
 
@@ -49,6 +52,7 @@ Student.prototype.create = function(properties) {
     Student.getRecordTypeId(student.conn)
     .then(function(data) {
       recordTypeId = data;
+      // TODO: Check to see if a new account record is required for the contact or if using a generic account
       var accountProperties = _.pick(properties, 'Partnership_Status__c', 'Remote__c', 'Phone');
       student.account = {
         Partnership_Status__c: properties.Partnership_Status__c,
@@ -63,6 +67,8 @@ Student.prototype.create = function(properties) {
         }
         student.accountId = ret.id;
         student.account.Id = ret.id;
+
+        // TODO: Edit properties so it matches defaults and required keys.
         var contactProperties = _.pick(properties, 'FirstName', 'LastName', 'Email', 'Pace__c', 
           'GitHub__c', 'Fulcrum_Status__c', 'Overall_Substatus__c', 'Sponsorship__c');
         contactProperties.AccountId = student.accountId;
@@ -112,6 +118,7 @@ Student.prototype.update = function(values) {
 Student.prototype.delete = function() {
   var student = this;
   return new Promise(function(resolve, reject) {
+    // TODO: Destroy contact instead of account if using a generic account
     student.conn.sobject('Account').destroy(student.AccountId, function(err, ret) {
       if (err || !ret.success) {
         return reject(err, ret);
@@ -137,6 +144,7 @@ Student.all = function(connection) {
 
 Student.getRecordTypeId = function(connection) {
   return new Promise(function(resolve, reject) {
+    // TODO: Change the record type
     connection.query("Select Id FROM RecordType WHERE Name = 'Fulcrum Student'", function(err, result) {
       if (err) {
         return reject(err);
