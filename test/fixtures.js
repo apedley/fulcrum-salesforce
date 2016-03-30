@@ -1,3 +1,4 @@
+// TODO: Change to different type of student
 module.exports = {
   studentProperties: {
     FirstName: 'Cowboy',

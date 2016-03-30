@@ -10,10 +10,11 @@ var studentDef = {
     Partnership_Status__c: 'None',
     Remote__c: true,
     MobilePhone: 0000000000,
+    Sponsorship__c: 'Not Sponsored',
+    //Fulcrum Specific
     Pace__c: 'Relaxed',
     Overall_Substatus__c: 'Started',
     Fulcrum_Status__c: 'Active',
-    Sponsorship__c: 'Not Sponsored'
   },
   requiredKeys: ['FirstName', 'LastName', 'GitHub__c', 'Email'], 
   valueArray: [
@@ -44,3 +45,4 @@ var Student = function student(conn, contactId, properties) {
   return this;
 }
 module.exports = Student
+
