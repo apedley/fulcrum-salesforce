@@ -38,14 +38,14 @@ describe('Student', function() {
 
     it('creates a student with defaults for properties that are not set', function(done) {
       this.timeout(5000);
-      var phone = studentProperties.Phone;
-      delete studentProperties.Phone;
+      var phone = studentProperties.MobilePhone;
+      delete studentProperties.MobilePhone;
 
       new Student(conn, null, studentProperties)
       .then(function(student) {
-        expect(student.account.Phone).to.be.eq(0);
+        expect(student.MobilePhone).to.be.eq('0');
 
-        studentProperties.Phone = phone;
+        studentProperties.MobilePhone = phone;
         done();
       });
     });
@@ -77,19 +77,20 @@ describe('Student', function() {
     });
   });
 
-  describe('delete', function() {
-    this.timeout(5000);
-    it('should delete the account and record of a student', function(done) {
-      _student.delete()
-      .then(function(res) {
-        expect(res.success).to.be.true;
-        done();
-      });
-    });
-  });
+  // WARN Cannot delete accounts, or records.
+  // describe('delete', function() {
+  //   this.timeout(5000);
+  //   it('should delete the account and record of a student', function(done) {
+  //     _student.delete()
+  //     .then(function(res) {
+  //       expect(res.success).to.be.true;
+  //       done();
+  //     });
+  //   });
+  // });
 
   it('should give a list of all ids', function(done) {
-    Student.all(conn)
+    new Student(conn).all()
     .then(function(records) {
       expect(records).to.be.instanceof(Array);
       done();
