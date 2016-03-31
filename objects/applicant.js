@@ -37,7 +37,7 @@ schools.forEach(function(ea) {
   Update school array above with new schools to extend functionality
 */
 
-var applicant = function Applicant (conn, contactId, properties) {
+function Applicant (conn, contactId, properties) {
   _.extend(this, new Contact(conn, applicantDef))
   
   var _create = this.create
@@ -75,9 +75,9 @@ var applicant = function Applicant (conn, contactId, properties) {
     return _update.call(contact, properties)
   } 
 
-
   if (contactId) {
     return this.find(contactId)
+          .then(_.partial(_.extend, this));
   } else if (properties) {
     return this.create(properties)
   }
@@ -85,4 +85,11 @@ var applicant = function Applicant (conn, contactId, properties) {
   return this
 }
 
-module.exports = applicant
+Applicant.prototype.getIdByEmail = function findByEmail (email) {
+  return this._runQuery('Select Id FROM Contact WHERE Email =\'' + email + '\'')
+          .then(function(data) {
+            return data.records
+          })
+}
+
+module.exports = Applicant

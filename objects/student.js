@@ -37,7 +37,8 @@ var Student = function student(conn, contactId, properties) {
   _.extend(this, new Contact(conn, studentDef));
 
   if (contactId) {
-    return this.find(contactId);
+    return this.find(contactId)
+            .then(_.partial(_.extend, this));
   } else if (properties) {
     return this.create(properties);
   }

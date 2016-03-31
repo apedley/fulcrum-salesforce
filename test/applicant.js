@@ -96,6 +96,19 @@ describe('Applicant', function() {
       })
     })
   })
+  describe('getIdByEmail', function() {
+    it('should find the contacy by email', function(done) {
+      this.timeout(timeout);
+      _applicant.getIdByEmail('cowboy@gmail.com')
+        .then(function(res) {
+          _applicant.find(res[0].Id)
+            .then(function(result){
+              expect(result.Email).to.equal('cowboy@gmail.com')
+              done();
+            })
+        })
+    })
+  })
 
   describe('update', function() {
     it('should update when values are valid', function(done) {

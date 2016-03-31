@@ -60,7 +60,6 @@ Contact.prototype.create = function(properties) {
 Contact.prototype.find = function(contactId) {
   return this._sObject.retrieve(contactId)
     .then(_.partial(flip(_.pick), this.valueArray)) //Pick only the valueArray items
-    .then(_.partial(_.extend, this)) // Destructively extend contact Object
 };
 
 Contact.prototype.update = function(values) {
