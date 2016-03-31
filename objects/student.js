@@ -44,5 +44,6 @@ var Student = function student(conn, contactId, properties) {
 
   return this;
 }
+
 module.exports = Student
 

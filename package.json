@@ -1,6 +1,6 @@
 {
   "name": "fulcrum-salesforce",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Objects for fulcrum",
   "main": "index.js",
   "scripts": {
